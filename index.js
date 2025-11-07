@@ -1,6 +1,6 @@
 import express from 'express'
 import path from "path"
-import { MongoClient } from 'mongodb'
+import { MongoClient, ObjectId } from 'mongodb'
 
 
 const app = express()
@@ -57,6 +57,17 @@ app.post("/add", async (req, resp) => {
         resp.redirect('/add')
     }
 
+})
+
+app.get('/delete' , async (req, resp) => {
+    const db = await connectDB()
+    const collection = db.collection(collectionName)
+    const result = collection.deleteOne({_id:new ObjectId(req.body.id)})
+    if (result) {
+        resp.redirect('/')
+    } else {
+        resp.redirect('/some error')
+    }
 })
 
 app.listen(3200)

@@ -29,7 +29,7 @@ app.get("/", async (req, resp) => {
     const db = await connectDB()
     const collection = db.collection(collectionName)
     const result = await collection.find().toArray()
-    console.log(result);
+    // console.log(result);
     
     resp.render('list',{result})
 })
@@ -66,7 +66,18 @@ app.get('/delete' , async (req, resp) => {
     if (result) {
         resp.redirect('/')
     } else {
-        resp.redirect('/some error')
+        resp.redirect('some error')
+    }
+})
+
+app.get('/update' , async (req, resp) => {
+    const db = await connectDB()
+    const collection = db.collection(collectionName)
+    const result = await collection.findOne({_id:new ObjectId(req.body.id)})
+    if (result) {
+        resp.redirect('/update',result)
+    } else {
+        resp.redirect('some error')
     }
 })
 

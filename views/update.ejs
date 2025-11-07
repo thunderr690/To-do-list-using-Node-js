@@ -4,19 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Update Task</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <%- include('navbar') %>
     
 
     <div class="container">
-        <h1>Update Task Page</h1>
+        <h1>Update Task</h1>
         <form class="todo-form" action="/update" method="post">
             <input class="input" type="text" placeholder="Enter Task Title" name="title">
             <br><br>
-            <textarea class="input" name="description" id=""></textarea>
+            <textarea class="input" name="description" ></textarea>
             <br><br>
-            <button class="btn">Add New Task</button>
+            <button class="btn">Update Task</button>
         </form>
     </div>
 </body>

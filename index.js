@@ -1,6 +1,7 @@
 import express from 'express'
 import path from "path"
 import { MongoClient, ObjectId } from 'mongodb'
+import { title } from 'process'
 
 
 const app = express()
@@ -30,8 +31,8 @@ app.get("/", async (req, resp) => {
     const collection = db.collection(collectionName)
     const result = await collection.find().toArray()
     // console.log(result);
-    
-    resp.render('list',{result})
+
+    resp.render('list', { result })
 })
 
 app.get("/add", (req, resp) => {
@@ -59,26 +60,44 @@ app.post("/add", async (req, resp) => {
 
 })
 
-app.get('/delete' , async (req, resp) => {
+app.get('/delete/:id', async (req, resp) => {
     const db = await connectDB()
     const collection = db.collection(collectionName)
-    const result = collection.deleteOne({_id:new ObjectId(req.body.id)})
+    const result = collection.deleteOne({ _id: new ObjectId(req.params.id) })
     if (result) {
         resp.redirect('/')
     } else {
-        resp.redirect('some error')
+        resp.send('some error')
     }
 })
 
-app.get('/update' , async (req, resp) => {
+app.get('/update/:id', async (req, resp) => {
     const db = await connectDB()
     const collection = db.collection(collectionName)
-    const result = await collection.findOne({_id:new ObjectId(req.body.id)})
+    const result = await collection.findOne({ _id: new ObjectId(req.params.id) })
+    console.log(result);
+
     if (result) {
-        resp.redirect('/update',result)
+        resp.render('update', { result })
     } else {
-        resp.redirect('some error')
+        resp.send('some error')
     }
 })
+
+app.post('/update/:id', async (req, resp) => {
+    const db = await connectDB()
+    const collection = db.collection(collectionName)
+    const filter = {_id:new ObjectId(req.params.id)}
+    const updateData = {$set:{title:req.body.title,description:req.body.description}}
+    const result = await collection.updateOne(filter, updateData)
+
+    if (result) {
+        resp.redirect("/")
+    } else {
+        resp.send('some error')
+    }
+})
+
+
 
 app.listen(3200)

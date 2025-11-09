@@ -87,10 +87,32 @@ app.get('/update/:id', async (req, resp) => {
 app.post('/update/:id', async (req, resp) => {
     const db = await connectDB()
     const collection = db.collection(collectionName)
-    const filter = {_id:new ObjectId(req.params.id)}
-    const updateData = {$set:{title:req.body.title,description:req.body.description}}
+    const filter = { _id: new ObjectId(req.params.id) }
+    const updateData = { $set: { title: req.body.title, description: req.body.description } }
     const result = await collection.updateOne(filter, updateData)
 
+    if (result) {
+        resp.redirect("/")
+    } else {
+        resp.send('some error')
+    }
+})
+
+app.post('/multi-delete', async (req, resp) => {
+    const db = await connectDB()
+    const collection = db.collection(collectionName)
+    console.log(req.body.selectedTask);
+    let selectedTask = undefined
+    if (Array.isArray(req.body.selectedTask)){
+        selectedTask = req.body.selectedTask.map((id) => new ObjectId(id))
+    }else{
+        selectedTask = [new ObjectId(req.body.selectedTask)]
+    }
+
+   
+
+    const result = await collection.deleteMany({_id: { $in: selectedTask }})
+    // const result = await collection.updateOne(filter.updateData)
     if (result) {
         resp.redirect("/")
     } else {
